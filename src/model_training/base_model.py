@@ -2,16 +2,13 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-import numpy as np
 import torch
 import wandb
 from lightning import LightningModule
 from torch import nn, optim
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from torch.utils.data import ConcatDataset
 
 from src.config import config
-from src.helpers.decorators import timer
 
 
 class BaseModel(LightningModule):
@@ -59,25 +56,6 @@ class BaseModel(LightningModule):
         loss = self.loss_func(y_hat, y)
         self.log('test_loss', loss)
         return loss
-
-    @timer
-    def predict(self, dataset: ConcatDataset) -> np.ndarray:
-        """
-        Predicts the output of the model given a dataset.
-        :param dataset: ConcatDataset of the desired track
-        :return: numpy array of predictions
-        THIS METHOD IS USING THE CPU.
-        """
-        device = torch.device('cpu')
-        self.to(device)
-        self.eval()
-        predictions = []
-        with torch.no_grad():
-            for i in range(len(dataset)):
-                x, y = dataset[i]
-                y_hat = self(x.unsqueeze(0)).detach().numpy()
-                predictions.append(y_hat)
-        return np.squeeze(predictions)
 
     def on_train_epoch_start(self) -> None:
         if config.trainer.log:

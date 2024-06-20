@@ -27,6 +27,7 @@ def get_trainer() -> Trainer:
     if config.trainer.log:
         logger = WandbLogger(
             project=config.wandb.project,
+            entity=config.wandb.entity,
             save_dir=config.logdir
         )
     else:

@@ -1,5 +1,4 @@
 from functools import lru_cache
-from pathlib import Path
 
 from dotenv import load_dotenv
 from pydantic import BaseModel, ValidationError
@@ -7,12 +6,13 @@ from pydantic import BaseModel, ValidationError
 
 class WandbConfig(BaseModel):
     # api_key is handled in .env file, wandb automatically log if it is set
-    project: str = 'MLP'
+    entity: str = 'deldrel'
+    project: str = 'lightning_template'
 
 
 class DataModuleConfig(BaseModel):
-    data_dir: Path = Path('data')
-    batch_size: int = 512
+    data_dir: str = 'data'
+    batch_size: int = 32
     num_workers: int = 8
     persistent_workers: bool = True
     training_set_ratio: float = 0.8
@@ -20,7 +20,7 @@ class DataModuleConfig(BaseModel):
 
 class ModelConfig(BaseModel):
     architecture: str = 'MLP'
-    learning_rate: float = 0.001
+    learning_rate: float = 0.01
     loss_function: str = 'CrossEntropyLoss'
     optimizer: str = 'NAdam'
 
@@ -29,7 +29,6 @@ class TrainerConfig(BaseModel):
     max_epochs: int = 50
     log: bool = True
     save_dir: str = 'logs/models'
-    test_every_n_epochs: int = 5
 
 
 class CheckpointConfig(BaseModel):

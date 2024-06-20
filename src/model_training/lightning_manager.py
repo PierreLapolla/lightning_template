@@ -50,6 +50,7 @@ class LightningManager:
 
         if config.trainer.log:
             wandb.init(project=config.wandb.project,
+                       entity=config.wandb.entity,
                        dir=config.logdir,
                        config=config.dump())
 
