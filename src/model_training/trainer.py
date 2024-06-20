@@ -10,7 +10,7 @@ def get_trainer() -> Trainer:
         dirpath=config.checkpoint.dirpath,
         filename=config.checkpoint.filename,
         monitor=config.checkpoint.monitor,
-        verbose=config.checkpoint.verbose,
+        verbose=config.verbose,
         save_last=config.checkpoint.save_last,
         save_top_k=config.checkpoint.save_top_k,
         mode=config.checkpoint.mode
@@ -20,7 +20,7 @@ def get_trainer() -> Trainer:
         monitor=config.early_stopping.monitor,
         # min_delta=config.early_stopping.min_delta,
         patience=config.early_stopping.patience,
-        verbose=config.early_stopping.verbose,
+        verbose=config.verbose,
         mode=config.early_stopping.mode
     )
 

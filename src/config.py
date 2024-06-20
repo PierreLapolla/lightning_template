@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pathlib import Path
 
 from dotenv import load_dotenv
 from pydantic import BaseModel, ValidationError
@@ -10,6 +11,7 @@ class WandbConfig(BaseModel):
 
 
 class DataModuleConfig(BaseModel):
+    data_dir: Path = Path('data')
     batch_size: int = 512
     num_workers: int = 8
     persistent_workers: bool = True
@@ -17,8 +19,9 @@ class DataModuleConfig(BaseModel):
 
 
 class ModelConfig(BaseModel):
+    architecture: str = 'MLP'
     learning_rate: float = 0.001
-    loss_function: str = 'HuberLoss'
+    loss_function: str = 'CrossEntropyLoss'
     optimizer: str = 'NAdam'
 
 
@@ -33,7 +36,6 @@ class CheckpointConfig(BaseModel):
     dirpath: str = 'logs/checkpoints'
     filename: str = 'checkpoint-{epoch:02d}-{val_loss:.6f}'
     monitor: str = 'val_loss'
-    verbose: bool = True
     save_last: bool = True
     save_top_k: int = 1
     mode: str = 'min'
@@ -43,7 +45,6 @@ class EarlyStoppingConfig(BaseModel):
     monitor: str = 'val_loss'
     min_delta: float = 0.0001
     patience: int = 10  # 10
-    verbose: bool = True
     mode: str = 'min'
 
 
@@ -51,13 +52,13 @@ class ReduceLROnPlateauConfig(BaseModel):
     monitor: str = 'val_loss'
     factor: float = 0.1
     patience: int = 5  # 5
-    verbose: bool = True
     mode: str = 'min'
 
 
 class Config(BaseModel):
     seed: int = 42
     logdir: str = 'logs'
+    verbose: bool = True
 
     wandb: WandbConfig = WandbConfig()
     data_module: DataModuleConfig = DataModuleConfig()

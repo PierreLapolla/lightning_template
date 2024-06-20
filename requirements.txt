@@ -4,6 +4,8 @@ matplotlib
 numpy
 pandas
 torch
+torchvision
+tqdm
 wandb
 lightning
 scikit-learn
