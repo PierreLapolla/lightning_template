@@ -48,17 +48,22 @@ class LightningManager:
     def train_model(self) -> None:
         self.setup()
 
-        if config.trainer.log:
+        try:
+
             wandb.init(project=config.wandb.project,
                        entity=config.wandb.entity,
                        dir=config.logdir,
                        config=config.dump())
 
-        print(f"NOTE: you can interrupt the training whenever you want with a keyboard interrupt (CTRL+C)")
-        self.trainer.fit(self.model, self.data_module)
-        self.trainer.test(self.model, self.data_module)
+            print(f"NOTE: you can interrupt the training whenever you want with a keyboard interrupt (CTRL+C)")
+            self.trainer.fit(self.model, self.data_module)
+            self.trainer.test(self.model, self.data_module)
 
-        if config.trainer.log:
+        except Exception as e:
+            if config.verbose:
+                print(f"Error training model: {e}")
+
+        finally:
             wandb.finish()
 
 

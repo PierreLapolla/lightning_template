@@ -24,14 +24,11 @@ def get_trainer() -> Trainer:
         mode=config.early_stopping.mode
     )
 
-    if config.trainer.log:
-        logger = WandbLogger(
-            project=config.wandb.project,
-            entity=config.wandb.entity,
-            save_dir=config.logdir
-        )
-    else:
-        logger = False
+    logger = WandbLogger(
+        project=config.wandb.project,
+        entity=config.wandb.entity,
+        save_dir=config.logdir
+    )
 
     return Trainer(
         max_epochs=config.trainer.max_epochs,

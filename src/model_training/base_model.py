@@ -58,14 +58,11 @@ class BaseModel(LightningModule):
         return loss
 
     def on_train_epoch_start(self) -> None:
-        if config.trainer.log:
-            self.log('learning_rate', self.trainer.optimizers[0].param_groups[0]['lr'])
+        self.log('learning_rate', self.trainer.optimizers[0].param_groups[0]['lr'])
 
     def on_train_end(self) -> None:
         path = Path(config.trainer.save_dir)
         path.mkdir(parents=True, exist_ok=True)
         model_name = f'model_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pt'
         torch.save(self.state_dict(), path / model_name)
-
-        if config.trainer.log:
-            wandb.save(str(path / model_name))
+        wandb.save(str(path / model_name))

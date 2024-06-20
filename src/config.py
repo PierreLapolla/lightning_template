@@ -5,7 +5,7 @@ from pydantic import BaseModel, ValidationError
 
 
 class WandbConfig(BaseModel):
-    # api_key is handled in .env file, wandb automatically log if it is set
+    # api_key is handled in .env file
     entity: str = 'deldrel'
     project: str = 'lightning_template'
 
@@ -27,7 +27,6 @@ class ModelConfig(BaseModel):
 
 class TrainerConfig(BaseModel):
     max_epochs: int = 50
-    log: bool = True
     save_dir: str = 'logs/models'
 
 
@@ -42,7 +41,7 @@ class CheckpointConfig(BaseModel):
 
 class EarlyStoppingConfig(BaseModel):
     monitor: str = 'val_loss'
-    min_delta: float = 0.0001
+    min_delta: float = 0.001
     patience: int = 10  # 10
     mode: str = 'min'
 
