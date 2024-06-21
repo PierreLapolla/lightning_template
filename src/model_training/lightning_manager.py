@@ -3,6 +3,7 @@ from pathlib import Path
 
 import torch
 import wandb
+import yaml
 
 from src.config import config
 from src.helpers.decorators import timer
@@ -17,7 +18,6 @@ class LightningManager:
         self.model = None
         self.trainer = None
 
-    @lru_cache(maxsize=1)
     def setup(self) -> None:
         self.data_module = DataModule()
 
@@ -26,7 +26,7 @@ class LightningManager:
         else:
             raise ValueError(f"Unknown architecture: {config.model.architecture}")
 
-        self.search_checkpoint()
+        # self.search_checkpoint()
         self.trainer = get_trainer()
 
     def search_checkpoint(self) -> None:
@@ -49,7 +49,6 @@ class LightningManager:
         self.setup()
 
         try:
-
             wandb.init(project=config.wandb.project,
                        entity=config.wandb.entity,
                        dir=config.logdir,
@@ -65,6 +64,24 @@ class LightningManager:
 
         finally:
             wandb.finish()
+
+    def sweep_train(self):
+        wandb.init(dir=config.logdir,
+                   config=config.dump())
+        config.update_from_dict(wandb.config)
+        self.setup()
+        self.trainer.fit(self.model, self.data_module)
+        wandb.finish()
+
+    @timer
+    def start_sweep(self) -> None:
+        with open(config.wandb.sweep_config, 'r') as f:
+            sweep_config = yaml.safe_load(f)
+
+        sweep_id = wandb.sweep(sweep_config,
+                               project=config.wandb.project,
+                               entity=config.wandb.entity)
+        wandb.agent(sweep_id, function=self.sweep_train)
 
 
 @lru_cache(maxsize=1)

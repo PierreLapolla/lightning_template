@@ -3,9 +3,11 @@ pydantic
 matplotlib
 numpy
 pandas
+pillow
 torch
 torchvision
 tqdm
 wandb
 lightning
 scikit-learn
+pyyaml

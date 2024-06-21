@@ -1,3 +1,4 @@
+import wandb
 from lightning.pytorch import Trainer
 from lightning.pytorch.callbacks import EarlyStopping, ModelCheckpoint
 from lightning.pytorch.loggers import WandbLogger
@@ -24,6 +25,7 @@ def get_trainer() -> Trainer:
         mode=config.early_stopping.mode
     )
 
+    wandb.finish()
     logger = WandbLogger(
         project=config.wandb.project,
         entity=config.wandb.entity,

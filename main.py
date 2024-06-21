@@ -11,6 +11,7 @@ def main() -> None:
     seed_everything(config.seed, workers=True)
     Menu({
         "1": ("Train model", lightning_manager.train_model),
+        "2": ("Start sweep", lightning_manager.start_sweep),
     }).start(timeout=60)
 
 

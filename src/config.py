@@ -1,13 +1,14 @@
 from functools import lru_cache
+from typing import Any, Dict
 
 from dotenv import load_dotenv
 from pydantic import BaseModel, ValidationError
 
 
 class WandbConfig(BaseModel):
-    # api_key is handled in .env file
     entity: str = 'deldrel'
     project: str = 'lightning_template'
+    sweep_config: str = 'src/sweep.yaml'
 
 
 class DataModuleConfig(BaseModel):
@@ -22,7 +23,7 @@ class ModelConfig(BaseModel):
     architecture: str = 'MLP'
     learning_rate: float = 0.01
     loss_function: str = 'CrossEntropyLoss'
-    optimizer: str = 'NAdam'
+    optimizer: str = 'Adam'
 
 
 class TrainerConfig(BaseModel):
@@ -42,14 +43,14 @@ class CheckpointConfig(BaseModel):
 class EarlyStoppingConfig(BaseModel):
     monitor: str = 'val_loss'
     min_delta: float = 0.001
-    patience: int = 10  # 10
+    patience: int = 10
     mode: str = 'min'
 
 
 class ReduceLROnPlateauConfig(BaseModel):
     monitor: str = 'val_loss'
     factor: float = 0.1
-    patience: int = 5  # 5
+    patience: int = 5
     mode: str = 'min'
 
 
@@ -66,8 +67,18 @@ class Config(BaseModel):
     early_stopping: EarlyStoppingConfig = EarlyStoppingConfig()
     reduce_lr_on_plateau: ReduceLROnPlateauConfig = ReduceLROnPlateauConfig()
 
-    def dump(self):
+    def dump(self) -> Dict[str, Any]:
         return self.model_dump()
+
+    def update_from_dict(self, config_dict: Dict[str, Any]) -> None:
+        for key, value in config_dict.items():
+            if hasattr(self, key):
+                current_value = getattr(self, key)
+                if isinstance(current_value, BaseModel):
+                    current_value = current_value.copy(update=value)
+                    setattr(self, key, current_value)
+                else:
+                    setattr(self, key, value)
 
 
 @lru_cache(maxsize=1)
