@@ -63,6 +63,6 @@ class BaseModel(LightningModule):
     def on_train_end(self) -> None:
         path = Path(config.trainer.save_dir)
         path.mkdir(parents=True, exist_ok=True)
-        model_name = f'model_{datetime.now().strftime("%Y%m%d_%H%M%S")}.pt'
+        model_name = f'model_{datetime.now().strftime("%Y_%m_%d__%H_%M_%S")}.pt'
         torch.save(self.state_dict(), path / model_name)
         wandb.save(str(path / model_name))

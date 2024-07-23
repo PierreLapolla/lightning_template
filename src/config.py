@@ -27,7 +27,7 @@ class ModelConfig(BaseModel):
 
 
 class TrainerConfig(BaseModel):
-    max_epochs: int = 50
+    max_epochs: int = 1
     save_dir: str = 'logs/models'
 
 
@@ -84,8 +84,7 @@ class Config(BaseModel):
 @lru_cache(maxsize=1)
 def get_config() -> Config:
     try:
-        if not load_dotenv(verbose=True):
-            raise ValidationError('No .env variable set')
+        load_dotenv(verbose=True)
         return Config()
     except ValidationError as e:
         print(e)

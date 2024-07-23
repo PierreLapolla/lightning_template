@@ -41,19 +41,16 @@ class DataModule(LightningDataModule):
         return DataLoader(self.val_set,
                           batch_size=config.data_module.batch_size,
                           num_workers=config.data_module.num_workers,
-                          persistent_workers=config.data_module.persistent_workers,
-                          shuffle=False)
+                          persistent_workers=config.data_module.persistent_workers)
 
     def test_dataloader(self) -> DataLoader:
         return DataLoader(self.test_set,
                           batch_size=config.data_module.batch_size,
                           num_workers=config.data_module.num_workers,
-                          persistent_workers=config.data_module.persistent_workers,
-                          shuffle=False)
+                          persistent_workers=config.data_module.persistent_workers)
 
     def predict_dataloader(self) -> DataLoader:
         return DataLoader(self.predict_set,
                           batch_size=config.data_module.batch_size,
                           num_workers=config.data_module.num_workers,
-                          persistent_workers=config.data_module.persistent_workers,
-                          shuffle=False)
+                          persistent_workers=config.data_module.persistent_workers)

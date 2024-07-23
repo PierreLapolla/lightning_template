@@ -51,9 +51,6 @@ def process_csv_files(
         if hasattr(df, "filename"):
             df.filename = f"{df.filename}_{process_function.__name__}"
 
-    if verbose:
-        print(f"Processed {len(processed_dfs)} DataFrames")
-
     final_dfs = dataframes + processed_dfs if keep_originals else processed_dfs
 
     if output_dir:
@@ -86,20 +83,14 @@ def load_csv_files(
         raise FileNotFoundError(f"No CSV files found in {path}")
 
     dataframes = []
-    successful_loads = 0
     for file in tqdm(files, desc=f"Loading CSV files from {path}", disable=not verbose):
         try:
             df = pd.read_csv(file)
             filename = file.name.split(".")[0]
             df.filename = filename
             dataframes.append(df)
-            successful_loads += 1
         except Exception as e:
-            if verbose:
-                print(f"Error loading {file}: {e}")
-
-    if verbose:
-        print(f"Loaded {successful_loads} CSV files from {path}")
+            print(f"Error loading {file}: {e}")
 
     if len(dataframes) == 1:
         return dataframes[0]
@@ -126,16 +117,10 @@ def save_csv_files(
     if isinstance(dataframes, pd.DataFrame):
         dataframes = [dataframes]
 
-    successful_saves = 0
     for i, df in enumerate(tqdm(dataframes, desc=f"Saving CSV files to {path}", disable=not verbose)):
         filename = df.filename if hasattr(df, "filename") else f"{i:09d}"
         filename = f"{filename}.csv" if not filename.endswith(".csv") else filename
         try:
             df.to_csv(path / filename, index=True)
-            successful_saves += 1
         except Exception as e:
-            if verbose:
-                print(f"Error saving DataFrame {filename}: {e}")
-
-    if verbose:
-        print(f"Saved {successful_saves} CSV files to {path}")
+            print(f"Error saving DataFrame {filename}: {e}")

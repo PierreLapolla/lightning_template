@@ -26,23 +26,7 @@ class LightningManager:
         else:
             raise ValueError(f"Unknown architecture: {config.model.architecture}")
 
-        # self.search_checkpoint()
         self.trainer = get_trainer()
-
-    def search_checkpoint(self) -> None:
-        path = Path(config.trainer.save_dir)
-        if not path.exists():
-            return
-        checkpoints = sorted(path.glob('*.pt'))
-        if not checkpoints:
-            return
-
-        if input(f"Load {checkpoints[-1]}? [y/n]: ") == "y":
-            try:
-                checkpoint = torch.load(checkpoints[-1])
-                self.model.load_state_dict(checkpoint)
-            except Exception as e:
-                print(f"Error loading checkpoint: {e}, keeping new model.")
 
     @timer
     def train_model(self) -> None:
