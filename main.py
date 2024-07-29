@@ -32,7 +32,7 @@ def main() -> None:
         "1": ("Train model", lightning_manager.train_model),
         "2": ("Start sweep", lightning_manager.start_sweep),
         "3": ("Benchmark inference", benchmark_inference),
-    }).start(timeout=60)
+    }).start(timeout=30)
 
 
 if __name__ == '__main__':

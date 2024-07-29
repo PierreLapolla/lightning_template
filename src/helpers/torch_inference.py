@@ -28,6 +28,12 @@ class TorchInference:
             print(f"Error loading model from {self.model_path}: {e}")
 
     def __call__(self, x: torch.Tensor, to_numpy: bool = True) -> Union[torch.Tensor, np.ndarray]:
+        """
+        Perform inference on a batch of data.
+        :param x: input data
+        :param to_numpy: whether to return the output as a numpy array
+        :return: model output
+        """
         with torch.no_grad():
             x = x.to(self.device)
             output = self.model(x)
