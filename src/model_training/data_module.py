@@ -20,15 +20,18 @@ class DataModule(LightningDataModule):
         MNIST(config.data_module.data_dir, train=False, download=True)
 
     def setup(self, stage: Optional[str] = None) -> None:
-        if stage == 'fit' or stage is None:
+        if stage == 'fit':
             mnist_full = MNIST(config.data_module.data_dir, train=True, transform=ToTensor())
             self.train_set, self.val_set = random_split(mnist_full, [55000, 5000])
 
-        if stage == 'test' or stage is None:
+        elif stage == 'test':
             self.test_set = MNIST(config.data_module.data_dir, train=False, transform=ToTensor())
 
-        if stage == 'predict' or stage is None:
+        elif stage == 'predict':
             self.predict_set = MNIST(config.data_module.data_dir, train=False, transform=ToTensor())
+
+        else:
+            raise ValueError(f"Stage '{stage}' is not recognized.")
 
     def train_dataloader(self) -> DataLoader:
         return DataLoader(self.train_set,

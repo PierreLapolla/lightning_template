@@ -7,12 +7,15 @@ class MLP(BaseModel):
     def __init__(self):
         super(MLP, self).__init__()
 
+        self.input_size = 28 * 28
+        self.output_size = 10
+
         self.layers = nn.Sequential(
-            nn.Linear(28 * 28, 256),
+            nn.Linear(self.input_size, 256),
             nn.ReLU(),
             nn.Linear(256, 128),
             nn.ReLU(),
-            nn.Linear(128, 10),
+            nn.Linear(128, self.output_size),
         )
 
     def forward(self, x):
