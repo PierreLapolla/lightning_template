@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 
 from lightning import LightningDataModule
@@ -14,6 +15,10 @@ class DataModule(LightningDataModule):
         This class is responsible for preparing the datasets and setting up the data loaders for the model.
         """
         super(DataModule, self).__init__()
+        self.num_workers = config.data_module.num_workers
+        max_workers = os.cpu_count()
+        if self.num_workers > max_workers or config.data_module.use_max_workers:
+            self.num_workers = max_workers
 
     def prepare_data(self) -> None:
         MNIST(config.data_module.data_dir, train=True, download=True)
@@ -36,24 +41,24 @@ class DataModule(LightningDataModule):
     def train_dataloader(self) -> DataLoader:
         return DataLoader(self.train_set,
                           batch_size=config.data_module.batch_size,
-                          num_workers=config.data_module.num_workers,
+                          num_workers=self.num_workers,
                           persistent_workers=config.data_module.persistent_workers,
                           shuffle=True)
 
     def val_dataloader(self) -> DataLoader:
         return DataLoader(self.val_set,
                           batch_size=config.data_module.batch_size,
-                          num_workers=config.data_module.num_workers,
+                          num_workers=self.num_workers,
                           persistent_workers=config.data_module.persistent_workers)
 
     def test_dataloader(self) -> DataLoader:
         return DataLoader(self.test_set,
                           batch_size=config.data_module.batch_size,
-                          num_workers=config.data_module.num_workers,
+                          num_workers=self.num_workers,
                           persistent_workers=config.data_module.persistent_workers)
 
     def predict_dataloader(self) -> DataLoader:
         return DataLoader(self.predict_set,
                           batch_size=config.data_module.batch_size,
-                          num_workers=config.data_module.num_workers,
+                          num_workers=self.num_workers,
                           persistent_workers=config.data_module.persistent_workers)

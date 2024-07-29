@@ -14,6 +14,7 @@ from src.model_training.mlp import MLP
 def benchmark_inference():
     mlp_inference = TorchInference(MLP, 'logs/models/model_2024_07_29__16_06_16.pt')
     data_module = DataModule()
+    data_module.prepare_data()
     data_module.setup('test')
     data_loader_length = len(data_module.test_dataloader())
 

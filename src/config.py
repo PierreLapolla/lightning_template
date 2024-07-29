@@ -15,6 +15,7 @@ class DataModuleConfig(BaseModel):
     data_dir: str = 'data'
     batch_size: int = 32
     num_workers: int = 8
+    use_max_workers: bool = True
     persistent_workers: bool = True
     training_set_ratio: float = 0.8
 
