@@ -8,11 +8,18 @@ from src.helpers.menu import Menu
 from src.helpers.torch_inference import TorchInference
 from src.model_training.data_module import DataModule
 from src.model_training.lightning_manager import lightning_manager
-from src.model_training.mlp import MLP
+from src.model_training.mnistmodel import MNISTModel
+from pathlib import Path
 
 
 def benchmark_inference():
-    mlp_inference = TorchInference(MLP, 'logs/models/model_2024_07_29__16_06_16.pt')
+    path = Path(config.trainer.save_dir)
+    if not path.exists():
+        raise FileNotFoundError(f"Path: {path} does not exist.")
+    model_list = list(path.glob('*.pt'))
+
+    mlp_inference = TorchInference(MNISTModel, model_list[0])
+
     data_module = DataModule()
     data_module.prepare_data()
     data_module.setup('test')

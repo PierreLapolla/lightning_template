@@ -5,17 +5,17 @@ from typing import Union, Type
 
 
 class TorchInference:
-    def __init__(self, model_class: Type[torch.nn.Module], model_path: Union[str, Path], device: str = 'auto') -> None:
+    def __init__(self, model_class: Type[torch.nn.Module], model_path: Union[str, Path], device: str = 'cuda') -> None:
         """
         Generic class for loading and using a PyTorch model for inference.
         :param model_class: class of the model to be loaded
         :param model_path: path to the model file
-        :param device: what device to use for inference, 'auto', 'cpu' or 'cuda'
+        :param device: what device to use for inference, 'cpu' or 'cuda' (default)
         """
         self.model: Union[torch.nn.Module, None] = None
         self.model_class = model_class
         self.model_path: Path = Path(model_path)
-        self.device: torch.device = torch.device('cuda' if torch.cuda.is_available() and device == 'auto' else 'cpu')
+        self.device: torch.device = torch.device('cuda' if torch.cuda.is_available() and device == 'cuda' else 'cpu')
         self.load_model()
 
     def load_model(self) -> None:

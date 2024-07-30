@@ -13,10 +13,11 @@ parameters:
         distribution: categorical
         values:
           - NAdam
+          - Adam
       architecture:
         distribution: categorical
         values:
-          - MLP
+          - MNISTModel
       learning_rate:
         distribution: uniform
         min: 0.0005
@@ -29,14 +30,14 @@ parameters:
     parameters:
       batch_size:
         distribution: int_uniform
-        min: 8
+        min: 32
         max: 128
   early_stopping:
     parameters:
       patience:
         distribution: int_uniform
         min: 5
-        max: 20
+        max: 10
   reduce_lr_on_plateau:
     parameters:
       factor:
@@ -51,4 +52,4 @@ early_terminate:
   type: hyperband
   min_iter: 3
   eta: 3
-count: 100  # Run 100 trials in total
+count: 20  # Run 20 trials in total

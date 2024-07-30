@@ -13,7 +13,7 @@ class WandbConfig(BaseModel):
 
 class DataModuleConfig(BaseModel):
     data_dir: str = 'data'
-    batch_size: int = 32
+    batch_size: int = 64
     num_workers: int = 8
     use_max_workers: bool = True
     persistent_workers: bool = True
@@ -21,8 +21,8 @@ class DataModuleConfig(BaseModel):
 
 
 class ModelConfig(BaseModel):
-    architecture: str = 'MLP'
-    learning_rate: float = 0.01
+    architecture: str = 'MNISTModel'
+    learning_rate: float = 0.001
     loss_function: str = 'CrossEntropyLoss'
     optimizer: str = 'Adam'
 
@@ -44,14 +44,14 @@ class CheckpointConfig(BaseModel):
 class EarlyStoppingConfig(BaseModel):
     monitor: str = 'val_loss'
     min_delta: float = 0.001
-    patience: int = 10
+    patience: int = 8
     mode: str = 'min'
 
 
 class ReduceLROnPlateauConfig(BaseModel):
     monitor: str = 'val_loss'
     factor: float = 0.1
-    patience: int = 5
+    patience: int = 4
     mode: str = 'min'
 
 
@@ -76,7 +76,7 @@ class Config(BaseModel):
             if hasattr(self, key):
                 current_value = getattr(self, key)
                 if isinstance(current_value, BaseModel):
-                    current_value = current_value.copy(update=value)
+                    current_value = current_value.model_copy(update=value)
                     setattr(self, key, current_value)
                 else:
                     setattr(self, key, value)

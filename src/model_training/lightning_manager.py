@@ -8,7 +8,7 @@ import yaml
 from src.config import config
 from src.helpers.decorators import timer
 from .data_module import DataModule
-from .mlp import MLP
+from .mnistmodel import MNISTModel
 from .trainer import get_trainer
 
 
@@ -21,8 +21,8 @@ class LightningManager:
     def setup(self) -> None:
         self.data_module = DataModule()
 
-        if config.model.architecture == 'MLP':
-            self.model = MLP()
+        if config.model.architecture == 'MNISTModel':
+            self.model = MNISTModel()
         else:
             raise ValueError(f"Unknown architecture: {config.model.architecture}")
 
