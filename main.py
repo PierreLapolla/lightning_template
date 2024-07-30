@@ -1,3 +1,4 @@
+from pathlib import Path
 from time import perf_counter
 
 from lightning.pytorch import seed_everything
@@ -9,7 +10,6 @@ from src.helpers.torch_inference import TorchInference
 from src.model_training.data_module import DataModule
 from src.model_training.lightning_manager import lightning_manager
 from src.model_training.mnistmodel import MNISTModel
-from pathlib import Path
 
 
 def benchmark_inference():

@@ -1,7 +1,8 @@
-import torch
-import numpy as np
 from pathlib import Path
-from typing import Union, Type
+from typing import Type, Union
+
+import numpy as np
+import torch
 
 
 class TorchInference:
@@ -16,9 +17,9 @@ class TorchInference:
         self.model_class = model_class
         self.model_path: Path = Path(model_path)
         self.device: torch.device = torch.device('cuda' if torch.cuda.is_available() and device == 'cuda' else 'cpu')
-        self.load_model()
+        self._load_model()
 
-    def load_model(self) -> None:
+    def _load_model(self) -> None:
         self.model = self.model_class().to(self.device)
         try:
             self.model.load_state_dict(torch.load(self.model_path, map_location=self.device))

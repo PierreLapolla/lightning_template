@@ -3,8 +3,8 @@ from typing import Optional
 
 from lightning import LightningDataModule
 from torch.utils.data import DataLoader, random_split
-from torchvision.transforms import ToTensor
 from torchvision.datasets import MNIST
+from torchvision.transforms import ToTensor
 
 from src.config import config
 
