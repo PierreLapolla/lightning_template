@@ -9,6 +9,11 @@ class TorchInference:
     def __init__(self, model_class: Type[torch.nn.Module], model_path: Union[str, Path], device: str = 'cuda') -> None:
         """
         Generic class for loading and using a PyTorch model for inference.
+
+        How to use:
+            inference = TorchInference(model_class, model_path)
+            output = inference(x)
+
         :param model_class: class of the model to be loaded
         :param model_path: path to the model file
         :param device: what device to use for inference, 'cpu' or 'cuda' (default)
@@ -21,12 +26,9 @@ class TorchInference:
 
     def _load_model(self) -> None:
         self.model = self.model_class().to(self.device)
-        try:
-            self.model.load_state_dict(torch.load(self.model_path, map_location=self.device))
-            self.model.eval()
-            print(f"Successfully loaded model from {self.model_path}, using device: {self.device}")
-        except Exception as e:
-            print(f"Error loading model from {self.model_path}: {e}")
+        self.model.load_state_dict(torch.load(self.model_path, map_location=self.device))
+        self.model.eval()
+        print(f"Successfully loaded model from {self.model_path}, using device: {self.device}")
 
     def __call__(self, x: torch.Tensor, to_numpy: bool = True) -> Union[torch.Tensor, np.ndarray]:
         """

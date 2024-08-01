@@ -16,9 +16,9 @@ def benchmark_inference():
     path = Path(config.trainer.save_dir)
     if not path.exists():
         raise FileNotFoundError(f"Path: {path} does not exist.")
-    model_list = list(path.glob('*.pt'))
+    model_path = list(path.glob('*.pt'))[0]
 
-    mlp_inference = TorchInference(MNISTModel, model_list[0])
+    mlp_inference = TorchInference(MNISTModel, model_path)
 
     data_module = DataModule()
     data_module.prepare_data()
