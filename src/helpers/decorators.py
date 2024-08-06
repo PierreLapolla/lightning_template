@@ -1,3 +1,4 @@
+import logging
 from functools import wraps
 from time import perf_counter
 
@@ -13,7 +14,7 @@ def timer(func: callable) -> callable:
         start = perf_counter()
         result = func(*args, **kwargs)
         end = perf_counter()
-        print(f"Execution time of {func.__name__}: {end - start:.6f} seconds")
+        logging.info(f"Execution time of {func.__name__}: {end - start:.6f} seconds")
         return result
 
     return wrapper
@@ -30,7 +31,8 @@ def try_except(func: callable) -> callable:
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            print(f"An exception occurred in {func.__name__}: {e}")
+            message = f"An exception occurred in {func.__name__}: {e}"
+            logging.error(message)
 
     return wrapper
 

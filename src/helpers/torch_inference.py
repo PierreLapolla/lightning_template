@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import Type, Union
 
@@ -28,7 +29,7 @@ class TorchInference:
         self.model = self.model_class().to(self.device)
         self.model.load_state_dict(torch.load(self.model_path, map_location=self.device))
         self.model.eval()
-        print(f"Successfully loaded model from {self.model_path}, using device: {self.device}")
+        logging.info(f"Successfully loaded model from {self.model_path}, using device: {self.device}")
 
     def __call__(self, x: torch.Tensor, to_numpy: bool = True) -> Union[torch.Tensor, np.ndarray]:
         """
@@ -41,3 +42,6 @@ class TorchInference:
             x = x.to(self.device)
             output = self.model(x)
             return output.cpu().numpy() if to_numpy else output.cpu()
+
+    def __str__(self) -> str:
+        return f"Model class: {self.model_class}\nModel path: {self.model_path}\nDevice: {self.device}"

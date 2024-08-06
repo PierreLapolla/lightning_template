@@ -1,36 +1,9 @@
-from pathlib import Path
-from time import perf_counter
-
 from lightning.pytorch import seed_everything
 
 from src.config import config
 from src.helpers.decorators import timer
 from src.helpers.menu import Menu
-from src.helpers.torch_inference import TorchInference
-from src.model_training.data_module import DataModule
 from src.model_training.lightning_manager import lightning_manager
-from src.model_training.mnistmodel import MNISTModel
-
-
-def benchmark_inference():
-    path = Path(config.trainer.save_dir)
-    if not path.exists():
-        raise FileNotFoundError(f"Path: {path} does not exist.")
-    model_path = list(path.glob('*.pt'))[0]
-
-    mlp_inference = TorchInference(MNISTModel, model_path)
-
-    data_module = DataModule()
-    data_module.prepare_data()
-    data_module.setup('test')
-    data_loader_length = len(data_module.test_dataloader())
-
-    start_time = perf_counter()
-    for x, _ in data_module.test_dataloader():
-        _ = mlp_inference(x)
-
-    average_time = (perf_counter() - start_time) / data_loader_length
-    print(f"Average time taken over {data_loader_length} passes: {average_time * data_loader_length:.6f} ms")
 
 
 @timer
@@ -38,8 +11,7 @@ def main() -> None:
     seed_everything(config.seed, workers=True)
     Menu({
         "1": ("Train model", lightning_manager.train_model),
-        "2": ("Start sweep", lightning_manager.start_sweep),
-        "3": ("Benchmark inference", benchmark_inference),
+        "2": ("Start sweep", lightning_manager.start_sweep)
     }).start(timeout=30)
 
 

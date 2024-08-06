@@ -1,3 +1,4 @@
+import logging
 import os
 from typing import Optional
 
@@ -19,6 +20,7 @@ class DataModule(LightningDataModule):
         max_workers = os.cpu_count()
         if self.num_workers > max_workers or config.data_module.use_max_workers:
             self.num_workers = max_workers
+        logging.info(f"Using {self.num_workers} workers for data loading.")
 
     def prepare_data(self) -> None:
         MNIST(config.data_module.data_dir, train=True, download=True)
@@ -36,7 +38,9 @@ class DataModule(LightningDataModule):
             self.predict_set = MNIST(config.data_module.data_dir, train=False, transform=ToTensor())
 
         else:
-            raise ValueError(f"Stage '{stage}' is not recognized.")
+            message = f"Stage '{stage}' is not recognized."
+            logging.error(message)
+            raise ValueError(message)
 
     def train_dataloader(self) -> DataLoader:
         return DataLoader(self.train_set,

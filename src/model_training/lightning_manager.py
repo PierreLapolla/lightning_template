@@ -1,3 +1,4 @@
+import logging
 from functools import lru_cache
 
 import wandb
@@ -22,7 +23,9 @@ class LightningManager:
         if config.model.architecture == 'MNISTModel':
             self.model = MNISTModel()
         else:
-            raise ValueError(f"Unknown architecture: {config.model.architecture}")
+            message = f"Unknown architecture: {config.model.architecture}"
+            logging.error(message)
+            raise ValueError(message)
 
         self.trainer = get_trainer()
 
@@ -36,13 +39,14 @@ class LightningManager:
                        dir=config.logdir,
                        config=config.dump())
 
-            print(f"NOTE: you can interrupt the training whenever you want with a keyboard interrupt (CTRL+C)")
+            logging.info(f"You can interrupt the training whenever you want with a keyboard interrupt (CTRL+C)")
             self.trainer.fit(self.model, self.data_module)
             self.trainer.test(self.model, self.data_module)
 
         except Exception as e:
             if config.verbose:
-                print(f"Error training model: {e}")
+                message = f"Error training model: {e}"
+                logging.error(message)
 
         finally:
             wandb.finish()

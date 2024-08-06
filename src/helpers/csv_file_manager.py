@@ -1,3 +1,4 @@
+import logging
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from pathlib import Path
 from typing import Callable, List, Optional, Union
@@ -36,7 +37,7 @@ def process_csv_files(
     if parallel in ("thread", "process"):
         executor = ThreadPoolExecutor() if parallel == "thread" else ProcessPoolExecutor()
         if verbose:
-            print(f"Using {parallel} parallelism")
+            logging.info(f"Using {parallel} parallelism")
         with executor as exe:
             processed_dfs = list(tqdm(exe.map(process_function, dataframes),
                                       total=len(dataframes),
@@ -75,12 +76,16 @@ def load_csv_files(
     """
     path = Path(path)
     if not path.exists():
-        raise FileNotFoundError(f"Path {path} does not exist")
+        message = f"Path {path} does not exist"
+        logging.error(message)
+        raise FileNotFoundError(message)
 
     files = sorted(path.glob("*.csv"))
 
     if not files:
-        raise FileNotFoundError(f"No CSV files found in {path}")
+        message = f"No CSV files found in {path}"
+        logging.error(message)
+        raise FileNotFoundError(message)
 
     dataframes = []
     for file in tqdm(files, desc=f"Loading CSV files from {path}", disable=not verbose):
@@ -90,7 +95,8 @@ def load_csv_files(
             df.filename = filename
             dataframes.append(df)
         except Exception as e:
-            print(f"Error loading {file}: {e}")
+            message = f"Error loading {file}: {e}"
+            logging.error(message)
 
     if len(dataframes) == 1:
         return dataframes[0]
@@ -123,4 +129,5 @@ def save_csv_files(
         try:
             df.to_csv(path / filename, index=True)
         except Exception as e:
-            print(f"Error saving DataFrame {filename}: {e}")
+            message = f"Error saving DataFrame {filename}: {e}"
+            logging.error(message)

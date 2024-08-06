@@ -1,3 +1,4 @@
+import logging
 import signal
 from typing import Callable, Dict, Optional
 
@@ -15,6 +16,7 @@ class Menu:
                 raise ValueError("Option '0' is reserved for exiting the menu")
             self.menu_options.update(options)
         self.running = False
+        logging.info(f"Menu initialized successfully")
 
     def __str__(self) -> str:
         """
@@ -38,7 +40,8 @@ class Menu:
                 signal.alarm(0)
                 self.handle_choice(choice)
             except TimeoutError:
-                print("No input received, exiting menu...")
+                message = "No input received, exiting menu..."
+                logging.info(message)
                 self.stop()
             finally:
                 signal.alarm(0)
