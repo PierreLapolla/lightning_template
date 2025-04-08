@@ -4,8 +4,8 @@ from functools import lru_cache
 import wandb
 import yaml
 
-from src.config import config
-from src.helpers.decorators import timer
+from outdated.src.config import config
+from outdated.src.helpers.decorators import timer
 from .data_module import DataModule
 from .mnistmodel import MNISTModel
 from .trainer import get_trainer
@@ -20,7 +20,7 @@ class LightningManager:
     def setup(self) -> None:
         self.data_module = DataModule()
 
-        if config.model.architecture == 'MNISTModel':
+        if config.model.architecture == "MNISTModel":
             self.model = MNISTModel()
         else:
             message = f"Unknown architecture: {config.model.architecture}"
@@ -34,12 +34,16 @@ class LightningManager:
         self.setup()
 
         try:
-            wandb.init(project=config.wandb.project,
-                       entity=config.wandb.entity,
-                       dir=config.logdir,
-                       config=config.dump())
+            wandb.init(
+                project=config.wandb.project,
+                entity=config.wandb.entity,
+                dir=config.logdir,
+                config=config.dump(),
+            )
 
-            logging.info(f"You can interrupt the training whenever you want with a keyboard interrupt (CTRL+C)")
+            logging.info(
+                "You can interrupt the training whenever you want with a keyboard interrupt (CTRL+C)"
+            )
             self.trainer.fit(self.model, self.data_module)
             self.trainer.test(self.model, self.data_module)
 
@@ -52,8 +56,7 @@ class LightningManager:
             wandb.finish()
 
     def sweep_train(self):
-        wandb.init(dir=config.logdir,
-                   config=config.dump())
+        wandb.init(dir=config.logdir, config=config.dump())
         config.update_from_dict(wandb.config)
         self.setup()
         self.trainer.fit(self.model, self.data_module)
@@ -61,12 +64,12 @@ class LightningManager:
 
     @timer
     def start_sweep(self) -> None:
-        with open(config.wandb.sweep_config, 'r') as f:
+        with open(config.wandb.sweep_config, "r") as f:
             sweep_config = yaml.safe_load(f)
 
-        sweep_id = wandb.sweep(sweep_config,
-                               project=config.wandb.project,
-                               entity=config.wandb.entity)
+        sweep_id = wandb.sweep(
+            sweep_config, project=config.wandb.project, entity=config.wandb.entity
+        )
         wandb.agent(sweep_id, function=self.sweep_train)
 
 

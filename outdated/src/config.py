@@ -6,13 +6,13 @@ from pydantic import BaseModel, ValidationError
 
 
 class WandbConfig(BaseModel):
-    entity: str = 'deldrel'
-    project: str = 'lightning_template'
-    sweep_config: str = 'src/sweep.yaml'
+    entity: str = "deldrel"
+    project: str = "lightning_template"
+    sweep_config: str = "src/sweep.yaml"
 
 
 class DataModuleConfig(BaseModel):
-    data_dir: str = 'data'
+    data_dir: str = "data"
     batch_size: int = 64
     num_workers: int = 8
     use_max_workers: bool = True
@@ -21,34 +21,34 @@ class DataModuleConfig(BaseModel):
 
 
 class ModelConfig(BaseModel):
-    architecture: str = 'MNISTModel'
+    architecture: str = "MNISTModel"
     learning_rate: float = 0.001
-    loss_function: str = 'CrossEntropyLoss'
-    optimizer: str = 'Adam'
+    loss_function: str = "CrossEntropyLoss"
+    optimizer: str = "Adam"
 
 
 class TrainerConfig(BaseModel):
-    max_epochs: int = 1
-    save_dir: str = 'logs/models'
+    max_epochs: int = 20
+    save_dir: str = "logs/models"
 
 
 class EarlyStoppingConfig(BaseModel):
-    monitor: str = 'val_loss'
+    monitor: str = "val_loss"
     min_delta: float = 0.001
     patience: int = 8
-    mode: str = 'min'
+    mode: str = "min"
 
 
 class ReduceLROnPlateauConfig(BaseModel):
-    monitor: str = 'val_loss'
+    monitor: str = "val_loss"
     factor: float = 0.1
     patience: int = 4
-    mode: str = 'min'
+    mode: str = "min"
 
 
 class Config(BaseModel):
     seed: int = 42
-    logdir: str = 'logs'
+    logdir: str = "logs"
     log_level: int = logging.INFO
     verbose: bool = True
 

@@ -7,7 +7,12 @@ import torch
 
 
 class TorchInference:
-    def __init__(self, model_class: Type[torch.nn.Module], model_path: Union[str, Path], device: str = 'cuda') -> None:
+    def __init__(
+        self,
+        model_class: Type[torch.nn.Module],
+        model_path: Union[str, Path],
+        device: str = "cuda",
+    ) -> None:
         """
         Generic class for loading and using a PyTorch model for inference.
 
@@ -22,16 +27,24 @@ class TorchInference:
         self.model: Union[torch.nn.Module, None] = None
         self.model_class = model_class
         self.model_path: Path = Path(model_path)
-        self.device: torch.device = torch.device('cuda' if torch.cuda.is_available() and device == 'cuda' else 'cpu')
+        self.device: torch.device = torch.device(
+            "cuda" if torch.cuda.is_available() and device == "cuda" else "cpu"
+        )
         self._load_model()
 
     def _load_model(self) -> None:
         self.model = self.model_class().to(self.device)
-        self.model.load_state_dict(torch.load(self.model_path, map_location=self.device))
+        self.model.load_state_dict(
+            torch.load(self.model_path, map_location=self.device)
+        )
         self.model.eval()
-        logging.info(f"Successfully loaded model from {self.model_path}, using device: {self.device}")
+        logging.info(
+            f"Successfully loaded model from {self.model_path}, using device: {self.device}"
+        )
 
-    def __call__(self, x: torch.Tensor, to_numpy: bool = True) -> Union[torch.Tensor, np.ndarray]:
+    def __call__(
+        self, x: torch.Tensor, to_numpy: bool = True
+    ) -> Union[torch.Tensor, np.ndarray]:
         """
         Perform inference on a batch of data.
         :param x: input data

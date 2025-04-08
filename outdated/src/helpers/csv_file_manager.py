@@ -8,12 +8,12 @@ from tqdm import tqdm
 
 
 def process_csv_files(
-        process_function: Callable[[pd.DataFrame], pd.DataFrame],
-        input_data: Union[pd.DataFrame, List[pd.DataFrame], Union[str, Path]],
-        output_dir: Optional[Union[str, Path]] = None,
-        parallel: Optional[str] = None,
-        keep_originals: bool = False,
-        verbose: bool = False
+    process_function: Callable[[pd.DataFrame], pd.DataFrame],
+    input_data: Union[pd.DataFrame, List[pd.DataFrame], Union[str, Path]],
+    output_dir: Optional[Union[str, Path]] = None,
+    parallel: Optional[str] = None,
+    keep_originals: bool = False,
+    verbose: bool = False,
 ) -> Union[pd.DataFrame, List[pd.DataFrame]]:
     """
     Process CSV files using a specified processing function either from a list of DataFrames or from a directory of CSV files.
@@ -35,18 +35,29 @@ def process_csv_files(
         dataframes = [dataframes]
 
     if parallel in ("thread", "process"):
-        executor = ThreadPoolExecutor() if parallel == "thread" else ProcessPoolExecutor()
+        executor = (
+            ThreadPoolExecutor() if parallel == "thread" else ProcessPoolExecutor()
+        )
         if verbose:
             logging.info(f"Using {parallel} parallelism")
         with executor as exe:
-            processed_dfs = list(tqdm(exe.map(process_function, dataframes),
-                                      total=len(dataframes),
-                                      desc=f"Processing {len(dataframes)} DataFrames",
-                                      disable=not verbose))
+            processed_dfs = list(
+                tqdm(
+                    exe.map(process_function, dataframes),
+                    total=len(dataframes),
+                    desc=f"Processing {len(dataframes)} DataFrames",
+                    disable=not verbose,
+                )
+            )
     else:
-        processed_dfs = [process_function(df) for df in tqdm(dataframes,
-                                                             desc=f"Processing {len(dataframes)} DataFrames",
-                                                             disable=not verbose)]
+        processed_dfs = [
+            process_function(df)
+            for df in tqdm(
+                dataframes,
+                desc=f"Processing {len(dataframes)} DataFrames",
+                disable=not verbose,
+            )
+        ]
 
     for df in processed_dfs:
         if hasattr(df, "filename"):
@@ -64,8 +75,8 @@ def process_csv_files(
 
 
 def load_csv_files(
-        path: Union[str, Path],
-        verbose: bool = False,
+    path: Union[str, Path],
+    verbose: bool = False,
 ) -> Union[pd.DataFrame, List[pd.DataFrame]]:
     """
     Load CSV files from a directory of CSV files.
@@ -105,9 +116,9 @@ def load_csv_files(
 
 
 def save_csv_files(
-        dataframes: Union[pd.DataFrame, List[pd.DataFrame]],
-        path: Union[str, Path],
-        verbose: bool = False
+    dataframes: Union[pd.DataFrame, List[pd.DataFrame]],
+    path: Union[str, Path],
+    verbose: bool = False,
 ) -> None:
     """
     Save DataFrames to a directory of CSV files.
@@ -123,7 +134,9 @@ def save_csv_files(
     if isinstance(dataframes, pd.DataFrame):
         dataframes = [dataframes]
 
-    for i, df in enumerate(tqdm(dataframes, desc=f"Saving CSV files to {path}", disable=not verbose)):
+    for i, df in enumerate(
+        tqdm(dataframes, desc=f"Saving CSV files to {path}", disable=not verbose)
+    ):
         filename = df.filename if hasattr(df, "filename") else f"{i:09d}"
         filename = f"{filename}.csv" if not filename.endswith(".csv") else filename
         try:

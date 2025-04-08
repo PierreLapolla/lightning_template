@@ -3,7 +3,7 @@ from lightning.pytorch import Trainer
 from lightning.pytorch.callbacks import EarlyStopping
 from lightning.pytorch.loggers import WandbLogger
 
-from src.config import config
+from outdated.src.config import config
 
 
 def get_trainer() -> Trainer:
@@ -12,14 +12,12 @@ def get_trainer() -> Trainer:
         min_delta=config.early_stopping.min_delta,
         patience=config.early_stopping.patience,
         verbose=config.verbose,
-        mode=config.early_stopping.mode
+        mode=config.early_stopping.mode,
     )
 
     wandb.finish()
     logger = WandbLogger(
-        project=config.wandb.project,
-        entity=config.wandb.entity,
-        save_dir=config.logdir
+        project=config.wandb.project, entity=config.wandb.entity, save_dir=config.logdir
     )
 
     return Trainer(
@@ -27,5 +25,5 @@ def get_trainer() -> Trainer:
         callbacks=[
             early_stopping_callback,
         ],
-        logger=logger
+        logger=logger,
     )

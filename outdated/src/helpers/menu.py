@@ -9,21 +9,28 @@ class Menu:
     Option "0" is reserved for exiting the menu.
     """
 
-    def __init__(self, options: Optional[Dict[str, tuple[str, Callable]]] = None) -> None:
+    def __init__(
+        self, options: Optional[Dict[str, tuple[str, Callable]]] = None
+    ) -> None:
         self.menu_options = {"0": ("Exit", self.stop)}
         if options:
             if "0" in options:
                 raise ValueError("Option '0' is reserved for exiting the menu")
             self.menu_options.update(options)
         self.running = False
-        logging.info(f"Menu initialized successfully")
+        logging.info("Menu initialized successfully")
 
     def __str__(self) -> str:
         """
         String representation of the menu.
         :return: str
         """
-        return "\n" + "\n".join([f"{key}. {description}" for key, (description, _) in self.menu_options.items()])
+        return "\n" + "\n".join(
+            [
+                f"{key}. {description}"
+                for key, (description, _) in self.menu_options.items()
+            ]
+        )
 
     def start(self, timeout: int = 30) -> None:
         """
