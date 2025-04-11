@@ -1,4 +1,3 @@
-import os
 from typing import Optional
 
 from lightning import LightningDataModule
@@ -8,14 +7,15 @@ from torchvision.transforms import ToTensor
 
 from utils.logger import log
 from pathlib import Path
+from lightning_template.config import config
 
 
 class DataModule(LightningDataModule):
     def __init__(self) -> None:
         super(DataModule, self).__init__()
         self.data_path = Path(__file__).parent.parent.parent / "data"
-        self.batch_size = 128
-        self.num_workers = min(os.cpu_count(), 32)
+        self.batch_size = config.batch_size
+        self.num_workers = config.num_workers
         log.info(f"Using {self.num_workers} workers for data loading.")
 
         self.train_set = None

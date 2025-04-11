@@ -22,3 +22,33 @@ def test_try_except_decorator(caplog):
     assert flag["cleanup_executed"] is True, (
         "Expected finally_callable to be executed even on exception"
     )
+
+
+def test_error_callable():
+    flag = {"error_called": False, "cleanup_executed": False}
+    exception_message = {"msg": ""}
+
+    def cleanup():
+        flag["cleanup_executed"] = True
+
+    def handle_error(e):
+        flag["error_called"] = True
+        exception_message["msg"] = str(e)
+
+    @try_except(finally_callable=cleanup, error_callable=handle_error)
+    def divide(a, b):
+        return a / b
+
+    flag["error_called"] = False
+    flag["cleanup_executed"] = False
+    result = divide(1, 0)
+    assert result is None, "Expected divide to return None on exception"
+    assert flag["error_called"] is True, (
+        "Expected error_callable to be executed on exception"
+    )
+    assert flag["cleanup_executed"] is True, (
+        "Expected finally_callable to be executed on exception"
+    )
+    assert "division by zero" in exception_message["msg"], (
+        "Expected division by zero error message"
+    )

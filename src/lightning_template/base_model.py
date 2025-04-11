@@ -1,6 +1,5 @@
 from abc import abstractmethod
 from datetime import datetime
-from pathlib import Path
 from typing import Any
 
 import torch
@@ -9,6 +8,7 @@ from lightning import LightningModule
 from torch.optim import Adam
 
 from utils.logger import log
+from lightning_template.config import config
 
 
 class BaseModel(LightningModule):
@@ -26,7 +26,7 @@ class BaseModel(LightningModule):
         pass
 
     def configure_optimizers(self):
-        optimizer = Adam(self.parameters(), lr=1e-5)
+        optimizer = Adam(self.parameters(), lr=config.learning_rate)
         return optimizer
 
     def _step(self, batch, loss_name: str) -> Any:
@@ -51,7 +51,7 @@ class BaseModel(LightningModule):
         )
 
     def on_train_end(self) -> None:
-        path = Path(__file__).parent.parent.parent / "models" / self.__class__.__name__
+        path = config.root_path / "models" / self.__class__.__name__
         path.mkdir(parents=True, exist_ok=True)
         model_name = f"model_{datetime.now().strftime('%Y_%m_%d__%H_%M_%S')}.pt"
         torch.save(self.state_dict(), path / model_name)
