@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from datetime import datetime
 from typing import Any
+from pathlib import Path
 
 import torch
 import wandb
@@ -50,10 +51,13 @@ class BaseModel(LightningModule):
             "lr", self.optimizers().param_groups[0]["lr"], prog_bar=True, logger=True
         )
 
+    def on_train_start(self) -> None:
+        wandb.init()
+
     def on_train_end(self) -> None:
-        path = config.root_path / "models" / self.__class__.__name__
+        path = Path("models") / self.__class__.__name__
         path.mkdir(parents=True, exist_ok=True)
         model_name = f"model_{datetime.now().strftime('%Y_%m_%d__%H_%M_%S')}.pt"
         torch.save(self.state_dict(), path / model_name)
-        wandb.save(str(path / model_name))
+        wandb.save(str(path / model_name), base_path=config.root_path)
         log.info(f"Saved model to {path / model_name}")

@@ -15,4 +15,5 @@ def get_trainer() -> Trainer:
         max_epochs=config.max_epochs,
         callbacks=[],
         logger=logger,
+        fast_dev_run=config.fast_dev_run,
     )

@@ -8,6 +8,7 @@ Project description
 
 - [UV](https://docs.astral.sh/uv/)
 - Project name in [pyproject.toml](pyproject.toml) file must be the same as your module's name in `src` folder.
+- [Pytorch Lightning](https://lightning.ai/docs/pytorch/latest/) knowledge.
 
 ### Initialize the project:
 

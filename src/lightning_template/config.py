@@ -34,6 +34,9 @@ class AppConfig(BaseSettings):
     max_epochs: conint(gt=0) = Field(
         description="Maximum number of epochs for training"
     )
+    fast_dev_run: bool = Field(
+        default=False, description="Run a single batch for debugging"
+    )
 
     # .env
     WANDB_API_KEY: Optional[str] = Field(
