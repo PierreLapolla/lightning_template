@@ -13,7 +13,6 @@ Project description
 
 ```bash
   uv sync
-  uv run pre-commit install
 ```
 
 ## Running the project
@@ -45,7 +44,7 @@ Additionally, we can run them manually with the following commands:
 You can also run pre-commit hooks manually with:
 
 ```bash
-  pre-commit run --all-files
+  uv run pre-commit run --all-files
 ```
 
 ## License

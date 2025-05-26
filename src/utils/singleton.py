@@ -54,20 +54,10 @@ if __name__ == "__main__":
     """
 
     @singleton
-    class SingletonExempleClass:
+    class ExempleClassDecorator:
         def __init__(self, value):
             self.value = value
 
-    singleton_1 = SingletonExempleClass(0)
-    singleton_2 = SingletonExempleClass(1)
-    assert singleton_1 == singleton_2
-    assert singleton_1.value == singleton_2.value
-
-    class SingletonExempleClass(metaclass=SingletonMeta):
+    class ExempleClassMetaclass(metaclass=SingletonMeta):
         def __init__(self, value):
             self.value = value
-
-    singleton_1 = SingletonExempleClass(0)
-    singleton_2 = SingletonExempleClass(1)
-    assert singleton_1 == singleton_2
-    assert singleton_1.value == singleton_2.value

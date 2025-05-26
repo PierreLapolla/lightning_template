@@ -1,4 +1,4 @@
-from time import perf_counter
+from time import perf_counter, sleep
 
 from utils.logger import log
 
@@ -14,7 +14,7 @@ def timer(func: callable) -> callable:
         start = perf_counter()
         result = func(*args, **kwargs)
         end = perf_counter()
-        log.info(f"Execution time of {func.__name__}: {end - start} seconds")
+        log.debug(f"{func.__name__}: {end - start} seconds")
         return result
 
     return wrapper
@@ -27,7 +27,6 @@ if __name__ == "__main__":
 
     @timer
     def example_function():
-        for _ in range(1000000):
-            pass
+        sleep(1)
 
     example_function()
