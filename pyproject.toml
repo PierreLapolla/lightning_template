@@ -7,15 +7,14 @@ license = {file = "LICENSE"}
 authors = [
     { name = "pierre"}
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 dependencies = [
-    "lightning>=2.5.1",
+    "lightning>=2.6.0",
+    "pedros>=0.0.5",
     "pydantic-settings>=2.8.1",
-    "python-dotenv>=1.1.0",
-    "structlog>=25.2.0",
-    "torch>=2.6.0",
-    "torchvision>=0.21.0",
-    "wandb>=0.19.9",
+    "rich>=14.2.0",
+    "torchvision>=0.24.1",
+    "wandb>=0.23.1",
 ]
 
 [build-system]

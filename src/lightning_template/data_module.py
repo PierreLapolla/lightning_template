@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Optional
 
 from lightning import LightningDataModule
@@ -5,18 +6,16 @@ from torch.utils.data import DataLoader, Dataset, random_split
 from torchvision.datasets import MNIST
 from torchvision.transforms import ToTensor
 
-from utils.logger import log
-from pathlib import Path
-from lightning_template.config import config
+from lightning_template.settings import get_settings
 
 
 class DataModule(LightningDataModule):
     def __init__(self) -> None:
         super(DataModule, self).__init__()
+        settings = get_settings()
         self.data_path = Path(__file__).parent.parent.parent / "data"
-        self.batch_size = config.batch_size
-        self.num_workers = config.num_workers
-        log.info(f"Using {self.num_workers} workers for data loading.")
+        self.batch_size = settings.data.batch_size
+        self.num_workers = settings.data.num_workers
 
         self.train_set = None
         self.val_set = None
@@ -40,7 +39,6 @@ class DataModule(LightningDataModule):
 
         else:
             message = f"Stage '{stage}' is not recognized."
-            log.error(message)
             raise ValueError(message)
 
     def _get_dataloader(self, dataset: Dataset, shuffle: bool = False) -> DataLoader:

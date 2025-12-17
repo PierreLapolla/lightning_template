@@ -1,15 +1,16 @@
-import wandb
 from lightning import seed_everything
 
-from lightning_template.config import config
 from lightning_template.lightning_manager import LightningManager
-from utils.timer import timer
+from lightning_template.settings import get_settings
+from lightning_template.wandb_manager import get_wandb
 
 
-@timer
 def main():
-    wandb.login(key=config.WANDB_API_KEY)
-    seed_everything(config.seed, workers=True)
+    settings = get_settings()
+    wandb = get_wandb()
+
+    wandb.login()
+    seed_everything(settings.seed, workers=True)
 
     lightning_manager = LightningManager()
     lightning_manager.start_training()

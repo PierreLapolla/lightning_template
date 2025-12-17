@@ -1,19 +1,24 @@
 from lightning.pytorch import Trainer
-from lightning.pytorch.loggers import WandbLogger
 
-from lightning_template.config import config
+from lightning_template.settings import get_settings
+from lightning_template.wandb_manager import get_wandb
 
 
 def get_trainer() -> Trainer:
-    logger = WandbLogger(
-        project="template_project",
-        entity="deldrel",
-        save_dir=str(config.root_path / "logs"),
-    )
+    settings = get_settings()
+    wandb = get_wandb()
+
+    callbacks = []
+    try:
+        from lightning.pytorch.callbacks import RichProgressBar
+        callbacks.append(RichProgressBar())
+    except ImportError:
+        pass
 
     return Trainer(
-        max_epochs=config.max_epochs,
-        callbacks=[],
-        logger=logger,
-        fast_dev_run=config.fast_dev_run,
+        accelerator="cpu",
+        max_epochs=settings.train.max_epochs,
+        callbacks=callbacks,
+        logger=wandb.get_logger(),
+        fast_dev_run=settings.train.fast_dev_run,
     )

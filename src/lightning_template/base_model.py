@@ -1,20 +1,21 @@
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 from datetime import datetime
-from typing import Any
 from pathlib import Path
+from typing import Any
 
 import torch
-import wandb
 from lightning import LightningModule
 from torch.optim import Adam
 
-from utils.logger import log
-from lightning_template.config import config
+from lightning_template.settings import get_settings
+from lightning_template.wandb_manager import get_wandb
 
 
-class BaseModel(LightningModule):
+class BaseModel(LightningModule, ABC):
     def __init__(self):
         super(BaseModel, self).__init__()
+        self.settings = get_settings()
+        self.wandb = get_wandb()
         self.loss_func = self.get_loss_func()
         self.save_hyperparameters()
 
@@ -27,7 +28,7 @@ class BaseModel(LightningModule):
         pass
 
     def configure_optimizers(self):
-        optimizer = Adam(self.parameters(), lr=config.learning_rate)
+        optimizer = Adam(self.parameters(), lr=self.settings.train.learning_rate)
         return optimizer
 
     def _step(self, batch, loss_name: str) -> Any:
@@ -52,12 +53,11 @@ class BaseModel(LightningModule):
         )
 
     def on_train_start(self) -> None:
-        wandb.init()
+        self.wandb.init()
 
     def on_train_end(self) -> None:
         path = Path("models") / self.__class__.__name__
         path.mkdir(parents=True, exist_ok=True)
         model_name = f"model_{datetime.now().strftime('%Y_%m_%d__%H_%M_%S')}.pt"
         torch.save(self.state_dict(), path / model_name)
-        wandb.save(str(path / model_name), base_path=config.root_path)
-        log.info(f"Saved model to {path / model_name}")
+        self.wandb.save(path / model_name)
