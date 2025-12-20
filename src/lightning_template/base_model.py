@@ -49,11 +49,11 @@ class BaseModel(LightningModule, ABC):
 
     def on_train_epoch_start(self) -> None:
         self.log(
-            "lr", self.optimizers().param_groups[0]["lr"], prog_bar=True, logger=True
+            "learning_rate",
+            self.optimizers().param_groups[0]["lr"],
+            prog_bar=True,
+            logger=True,
         )
-
-    def on_train_start(self) -> None:
-        self.wandb.init()
 
     def on_train_end(self) -> None:
         path = Path("models") / self.__class__.__name__

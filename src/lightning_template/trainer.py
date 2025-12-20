@@ -9,14 +9,12 @@ def get_trainer() -> Trainer:
     wandb = get_wandb()
 
     callbacks = []
-    try:
+    if settings.env.has_rich:
         from lightning.pytorch.callbacks import RichProgressBar
         callbacks.append(RichProgressBar())
-    except ImportError:
-        pass
 
     return Trainer(
-        accelerator="cpu",
+        accelerator="cpu" if settings.train.force_cpu else "auto",
         max_epochs=settings.train.max_epochs,
         callbacks=callbacks,
         logger=wandb.get_logger(),

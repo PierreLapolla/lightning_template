@@ -1,8 +1,23 @@
+import importlib.util
 from functools import cache
 from pathlib import Path
+from typing import Any
 
-from pydantic import BaseModel, PositiveFloat, PositiveInt
+from pedros.logger import get_logger
+from pydantic import BaseModel, PositiveFloat, PositiveInt, computed_field
 from pydantic_settings import BaseSettings
+
+
+class EnvInfo(BaseModel):
+    @computed_field
+    @property
+    def has_wandb(self) -> bool:
+        return importlib.util.find_spec("wandb") is not None
+
+    @computed_field
+    @property
+    def has_rich(self) -> bool:
+        return importlib.util.find_spec("rich") is not None
 
 
 class DataCfg(BaseModel):
@@ -11,25 +26,35 @@ class DataCfg(BaseModel):
 
 
 class TrainCfg(BaseModel):
-    learning_rate: PositiveFloat = 0.001
-    max_epochs: PositiveInt = 10
+    force_cpu: bool = False
+    learning_rate: PositiveFloat = 0.0001
+    max_epochs: PositiveInt = 20
     fast_dev_run: bool = False
 
 
 class WandbCfg(BaseModel):
     root_path: Path = Path(__file__).resolve().parents[2]
 
-    use_wandb: bool = False
-    project: str = "template_project"
+    use_wandb: bool = True
+    project: str = "lightning_template"
     entity: str = "deldrel"
 
 
 class AppSettings(BaseSettings):
     seed: int = 2002
 
+    env: EnvInfo = EnvInfo()
     data: DataCfg = DataCfg()
     train: TrainCfg = TrainCfg()
     wandb: WandbCfg = WandbCfg()
+
+    def __init__(self, **values: Any):
+        super().__init__(**values)
+        logger = get_logger()
+        if self.wandb.use_wandb and not self.env.has_wandb:
+            logger.warning(
+                "Wandb is enabled in settings but wandb package is not installed. If you want to use it, make sure to add it to the environment with `pip install wandb`."
+            )
 
 
 @cache

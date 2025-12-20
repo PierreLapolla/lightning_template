@@ -9,11 +9,8 @@ from lightning_template.settings import get_settings
 class WandbManager:
     def __init__(self):
         self.settings = get_settings()
-        try:
-            import wandb
-            self.wandb = wandb if self.settings.wandb.use_wandb else None
-        except ImportError:
-            self.wandb = None
+        self.enabled = self.settings.env.has_wandb and self.settings.wandb.use_wandb
+        self.wandb = __import__("wandb") if self.enabled else None
 
     def login(self):
         if self.wandb:
