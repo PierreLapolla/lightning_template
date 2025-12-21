@@ -2,6 +2,7 @@ from functools import cache
 from pathlib import Path
 
 from lightning.pytorch.loggers import WandbLogger
+from pedros.dependency_check import check_dependency
 
 from lightning_template.settings import get_settings
 
@@ -9,7 +10,7 @@ from lightning_template.settings import get_settings
 class WandbManager:
     def __init__(self):
         self.settings = get_settings()
-        self.enabled = self.settings.env.has_wandb and self.settings.wandb.use_wandb
+        self.enabled = check_dependency("wandb") and self.settings.wandb.use_wandb
         self.wandb = __import__("wandb") if self.enabled else None
 
     def login(self):
@@ -27,8 +28,7 @@ class WandbManager:
     def get_logger(self) -> WandbLogger | None:
         if self.wandb:
             return WandbLogger(
-                project=self.settings.wandb.project,
-                entity=self.settings.wandb.entity
+                project=self.settings.wandb.project, entity=self.settings.wandb.entity
             )
         return None
 
