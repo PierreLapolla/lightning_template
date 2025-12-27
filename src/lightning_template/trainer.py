@@ -1,12 +1,11 @@
 from lightning.pytorch import Trainer
 from pedros.dependency_check import check_dependency
 
-from lightning_template.settings import get_settings
+from lightning_template.settings import AppSettings
 from lightning_template.wandb_manager import get_wandb
 
 
-def get_trainer() -> Trainer:
-    settings = get_settings()
+def get_trainer(settings: AppSettings) -> Trainer:
     wandb = get_wandb()
 
     callbacks = []

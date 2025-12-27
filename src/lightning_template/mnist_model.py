@@ -1,11 +1,12 @@
 import torch.nn as nn
 
 from lightning_template.base_model import BaseModel
+from lightning_template.settings import AppSettings
 
 
 class MNISTModel(BaseModel):
-    def __init__(self):
-        super(MNISTModel, self).__init__()
+    def __init__(self, settings: AppSettings):
+        super(MNISTModel, self).__init__(settings)
 
         self.conv_layers = nn.Sequential(
             nn.Conv2d(

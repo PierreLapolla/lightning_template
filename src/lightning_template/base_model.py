@@ -7,17 +7,17 @@ import torch
 from lightning import LightningModule
 from torch.optim import Adam
 
-from lightning_template.settings import get_settings
+from lightning_template.settings import AppSettings
 from lightning_template.wandb_manager import get_wandb
 
 
 class BaseModel(LightningModule, ABC):
-    def __init__(self):
+    def __init__(self, settings: AppSettings):
         super(BaseModel, self).__init__()
-        self.settings = get_settings()
+        self.settings = settings
         self.wandb = get_wandb()
         self.loss_func = self.get_loss_func()
-        self.save_hyperparameters()
+        self.save_hyperparameters(ignore=["settings"])
 
     @abstractmethod
     def get_loss_func(self):

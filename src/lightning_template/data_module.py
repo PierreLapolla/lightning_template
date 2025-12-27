@@ -6,16 +6,14 @@ from torch.utils.data import DataLoader, Dataset, random_split
 from torchvision.datasets import MNIST
 from torchvision.transforms import ToTensor
 
-from lightning_template.settings import get_settings
+from lightning_template.settings import AppSettings
 
 
 class DataModule(LightningDataModule):
-    def __init__(self) -> None:
+    def __init__(self, settings: AppSettings) -> None:
         super(DataModule, self).__init__()
-        settings = get_settings()
+        self.settings = settings
         self.data_path = Path(__file__).parent.parent.parent / "data"
-        self.batch_size = settings.data.batch_size
-        self.num_workers = settings.data.num_workers
 
         self.train_set = None
         self.val_set = None
@@ -44,8 +42,8 @@ class DataModule(LightningDataModule):
     def _get_dataloader(self, dataset: Dataset, shuffle: bool = False) -> DataLoader:
         return DataLoader(
             dataset,
-            batch_size=self.batch_size,
-            num_workers=self.num_workers,
+            batch_size=self.settings.data.batch_size,
+            num_workers=self.settings.data.num_workers,
             persistent_workers=True,
             shuffle=shuffle,
         )

@@ -1,36 +1,68 @@
 from functools import cache
 from pathlib import Path
+from typing import Callable
 
 from lightning.pytorch.loggers import WandbLogger
 from pedros.dependency_check import check_dependency
+from pedros.logger import get_logger
 
 from lightning_template.settings import get_settings
 
 
 class WandbManager:
     def __init__(self):
+        self.logger = get_logger()
         self.settings = get_settings()
         self.enabled = check_dependency("wandb") and self.settings.wandb.use_wandb
         self.wandb = __import__("wandb") if self.enabled else None
 
     def login(self):
-        if self.wandb:
+        if self.enabled:
             self.wandb.login()
 
     def init(self):
-        if self.wandb:
-            self.wandb.init()
+        if self.enabled:
+            return self.wandb.init(
+                project=self.settings.wandb.project,
+                entity=self.settings.wandb.entity,
+                dir=str(self.settings.wandb.root_path)
+            )
+        return None
+
+    def finish(self):
+        if self.enabled:
+            self.wandb.finish()
 
     def save(self, path: Path):
-        if self.wandb:
+        if self.enabled:
             self.wandb.save(path, base_path=self.settings.wandb.root_path)
 
     def get_logger(self) -> WandbLogger | None:
-        if self.wandb:
+        if self.enabled:
             return WandbLogger(
-                project=self.settings.wandb.project, entity=self.settings.wandb.entity
+                project=self.settings.wandb.project,
+                entity=self.settings.wandb.entity,
+                save_dir=str(self.settings.wandb.root_path),
+                experiment=self.wandb.run,
             )
         return None
+
+    def run_sweep(self, train_fn: Callable[[], None]):
+        if not self.wandb:
+            self.logger.warning("Wandb is not installed. Skipping sweep.")
+            return None
+
+        sweep_id = self.wandb.sweep(
+            sweep=self.settings.wandb.sweep_config,
+            project=self.settings.wandb.project,
+            entity=self.settings.wandb.entity,
+        )
+        self.wandb.agent(
+            sweep_id=sweep_id,
+            function=train_fn,
+            count=self.settings.wandb.sweep_count,
+        )
+        return sweep_id
 
 
 @cache
