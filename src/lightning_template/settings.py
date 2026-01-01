@@ -2,8 +2,7 @@ from functools import cache
 from pathlib import Path
 from typing import Any
 
-from pedros.dependency_check import check_dependency
-from pedros.logger import get_logger
+from pedros import has_dep, get_logger
 from pydantic import BaseModel, PositiveFloat, PositiveInt
 from pydantic_settings import BaseSettings
 
@@ -49,7 +48,7 @@ class AppSettings(BaseSettings):
     def __init__(self, **values: Any):
         super().__init__(**values)
         logger = get_logger()
-        if self.wandb.use_wandb and not check_dependency("wandb"):
+        if self.wandb.use_wandb and not has_dep("wandb"):
             logger.warning(
                 "Wandb is enabled in settings but wandb package is not installed. If you want to use it, make sure to add it to the environment with `pip install wandb`."
             )

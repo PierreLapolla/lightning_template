@@ -3,8 +3,7 @@ from pathlib import Path
 from typing import Callable
 
 from lightning.pytorch.loggers import WandbLogger
-from pedros.dependency_check import check_dependency
-from pedros.logger import get_logger
+from pedros import has_dep, get_logger
 
 from lightning_template.settings import get_settings
 
@@ -13,7 +12,7 @@ class WandbManager:
     def __init__(self):
         self.logger = get_logger()
         self.settings = get_settings()
-        self.enabled = check_dependency("wandb") and self.settings.wandb.use_wandb
+        self.enabled = has_dep("wandb") and self.settings.wandb.use_wandb
         self.wandb = __import__("wandb") if self.enabled else None
 
     def login(self):

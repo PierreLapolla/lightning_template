@@ -1,5 +1,5 @@
 from lightning.pytorch import Trainer
-from pedros.dependency_check import check_dependency
+from pedros import has_dep
 
 from lightning_template.settings import AppSettings
 from lightning_template.wandb_manager import get_wandb
@@ -9,7 +9,7 @@ def get_trainer(settings: AppSettings) -> Trainer:
     wandb = get_wandb()
 
     callbacks = []
-    if check_dependency("rich"):
+    if has_dep("rich"):
         from lightning.pytorch.callbacks import RichProgressBar
 
         callbacks.append(RichProgressBar())

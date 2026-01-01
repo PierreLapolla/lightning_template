@@ -1,6 +1,6 @@
 import logging
 
-from pedros.logger import setup_logging
+from pedros import setup_logging
 
 setup_logging()
 

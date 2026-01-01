@@ -1,5 +1,5 @@
 from lightning import seed_everything
-from pedros.logger import get_logger
+from pedros import get_logger
 
 from lightning_template.data_module import DataModule
 from lightning_template.mnist_model import MNISTModel

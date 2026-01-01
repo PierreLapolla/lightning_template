@@ -3,14 +3,14 @@ name = "lightning-template"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-license = {file = "LICENSE"}
+license = { file = "LICENSE" }
 authors = [
-    { name = "pierre"}
+    { name = "pierre" }
 ]
 requires-python = ">=3.11"
 dependencies = [
     "lightning<2.5.0",
-    "pedros>=0.0.5",
+    "pedros>=0.0.11",
     "pydantic-settings>=2.8.1",
     "rich<14.0.0",
     "torch<2.6.0",
